@@ -1,4 +1,4 @@
-package com.device;
+package com.deviceregistry.application;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
