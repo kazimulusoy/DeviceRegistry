@@ -1,33 +1,42 @@
 package com.deviceregistry.conf;
 
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import com.deviceregistry.controller.DeviceRegistryController;
-
-import static springfox.documentation.builders.PathSelectors.regex;
-
 import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+/**
+ * Configure the
+ * <a href="http://swagger.io/swagger-2-0-tooling-released/">Swagger</a> for
+ * this project.<br>
+ * The swagger documentation is available here:
+ * <ul>
+ * <li>http://localhost:8889/v2/api-docs
+ * <li>http://localhost:8889/swagger-ui.html
+ * </ul>
+ *
+ * @author Kazim Ulusoy
+ */
 @Configuration
-@EnableAutoConfiguration
 @EnableSwagger2
-@ComponentScan(basePackageClasses = { DeviceRegistryController.class })
-public class SwaggerConfig {
+@ComponentScan(basePackages = {"com.deviceregistry.controller"})
+public class SwaggerConfiguration {
 	@Bean
 	public Docket api() {
 		return new Docket(DocumentationType.SWAGGER_2)
-				.groupName("spring-swagger-api")
 				.apiInfo(apiInfo())
 				.select()
-				.paths(regex("/all.*"))
-				.build();
+				.apis(RequestHandlerSelectors.any())
+				.paths(PathSelectors.any())
+				.build()
+				.pathMapping("/");
 	}
 
 	private ApiInfo apiInfo() {
