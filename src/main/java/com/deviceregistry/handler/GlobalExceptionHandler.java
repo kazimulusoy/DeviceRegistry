@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -44,6 +45,17 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public void handleDataIntegrityViolation(HttpServletResponse response, Exception exception) {
+        handleRequest(response, exception, HttpServletResponse.SC_BAD_REQUEST);
+    }
+    
+    /**
+     * Handle http message not readable exception.
+     *
+     * @param response the response
+     * @param exception the exception
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public void handleHttpMessageNotReadableException(HttpServletResponse response, Exception exception) {
         handleRequest(response, exception, HttpServletResponse.SC_BAD_REQUEST);
     }
     

@@ -4,40 +4,31 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 
 @Configuration
 public class RabbitMqConfiguration {
-	@Bean
-	Queue queueMessage() {
-		return new Queue("queue.message", false);
-	}
 	
-	@Bean
-	Queue queueMessages() {
-		return new Queue("queue.messages", false);
-	}
+	@Value("${service.rabbitmq.queue}")
+	private String queueName;
 	
-	@Bean
-	TopicExchange exchange() {
-		return new TopicExchange("exchange");
-	}
+	@Value("${service.rabbitmq.exhange}")
+	private String exchangeName;
 
-	@Bean
-	Binding bindingExchangeMessage(Queue queueMessage, TopicExchange exchange) {
-		return BindingBuilder.bind(queueMessage).to(exchange).with("queue.message");
-	}
+    @Bean
+    Queue queue() {
+        return new Queue(queueName, false);
+    }
 
-	@Bean
-	Binding bindingExchangeMessages(Queue queueMessages, TopicExchange exchange) {
-		return BindingBuilder.bind(queueMessages).to(exchange).with("queue.messages");
-	}
-	
-	@Bean
-	public MappingJackson2MessageConverter jackson2Converter() {
-		MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
-		return converter;
-	}
+    @Bean
+    TopicExchange exchange() {
+        return new TopicExchange(exchangeName);
+    }
+
+    @Bean
+    Binding binding(Queue queue, TopicExchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(queueName);
+    }
 }

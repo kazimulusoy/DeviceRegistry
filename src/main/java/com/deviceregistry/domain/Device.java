@@ -170,5 +170,11 @@ public class Device {
 		this.softwareVersion = softwareVersion;
 	}
 
+	@Override
+	public String toString() {
+		return "Device [description=" + description + ", vendor=" + vendor + ", serialNumber=" + serialNumber
+				+ ", hardwareVersion=" + hardwareVersion + ", softwareVersion=" + softwareVersion + "]";
+	}
+
 	
 }
