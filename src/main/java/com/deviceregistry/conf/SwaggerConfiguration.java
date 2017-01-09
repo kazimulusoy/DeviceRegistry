@@ -54,7 +54,6 @@ public class SwaggerConfiguration {
 		return new ApiInfoBuilder()
 				.title("Spring REST Service for Device Registry")
 				.description("Device Registry")
-				.contact("Kazim ULUSOY")
 				.version("2.0")
 				.build();
 	}
