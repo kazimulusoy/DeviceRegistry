@@ -12,7 +12,7 @@ import com.deviceregistry.conf.SwaggerConfiguration;
  */
 @Import({ SwaggerConfiguration.class, RabbitMqConfiguration.class })
 @SpringBootApplication
-public class Application {
+public class DeviceRegistryApplication {
 	
 	/**
 	 * The main method.
@@ -20,6 +20,6 @@ public class Application {
 	 * @param args the arguments
 	 */
 	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
+		SpringApplication.run(DeviceRegistryApplication.class, args);
 	}
 }
