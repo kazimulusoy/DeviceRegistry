@@ -40,7 +40,7 @@ public class DeviceRegistryController {
 	
 	/** The service queue. */
 	@Value("${target.rabbitmq.queue}")
-	private String serviceQueue;
+	private String targetserviceQueue;
 	
 	/** The rabbitmq enabled. */
 	@Value("${rabbitmq.enabled}")
@@ -70,7 +70,7 @@ public class DeviceRegistryController {
 		LOG.info(hardware.toString());
 		
 		if (rabbitmqEnabled) {
-			this.rabbitTemplate.convertAndSend(serviceQueue, hardware.toString() + " added!");
+			this.rabbitTemplate.convertAndSend(targetserviceQueue, hardware.toString() + " added!");
 		}
 		
 		return this.deviceRepository.save(hardware);
@@ -104,7 +104,7 @@ public class DeviceRegistryController {
 		
 		if (!devices.isEmpty() && rabbitmqEnabled) {
 			for (Device device : devices) {
-				this.rabbitTemplate.convertAndSend(serviceQueue, device.toString() + " deleted!");
+				this.rabbitTemplate.convertAndSend(targetserviceQueue, device.toString() + " deleted!");
 			}
 		}
 		
