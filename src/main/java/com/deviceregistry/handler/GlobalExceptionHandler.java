@@ -6,6 +6,7 @@ import java.io.StringWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.amqp.AmqpConnectException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -36,6 +37,16 @@ public class GlobalExceptionHandler {
         handleRequest(response, exception, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
     
+    /**
+     * Handle amqp connect exception.
+     *
+     * @param response the response
+     * @param exception the exception
+     */
+    @ExceptionHandler(AmqpConnectException.class)
+    public void handleAmqpConnectException(HttpServletResponse response, Exception exception) {
+        handleRequest(response, exception, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    }
 
     /**
      * Handle DataIntegrityViolation exception.

@@ -7,13 +7,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.deviceregistry.WebApiConstant;
 
+/**
+ * The Class HealthController.
+ */
 @RestController
 @RequestMapping(WebApiConstant.RESOURCE_URL)
 public class HealthController {
 	
+	/** The service name. */
 	@Value(("${service.name}"))
 	private String serviceName;
 	
+	/**
+	 * Custom.
+	 *
+	 * @return the string
+	 */
 	@RequestMapping(path = "/hello", method = RequestMethod.GET)
     public String custom() {
         return this.serviceName + " is running.";

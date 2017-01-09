@@ -28,6 +28,12 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @ComponentScan(basePackages = {"com.deviceregistry.controller"})
 public class SwaggerConfiguration {
+	
+	/**
+	 * Api.
+	 *
+	 * @return the docket
+	 */
 	@Bean
 	public Docket api() {
 		return new Docket(DocumentationType.SWAGGER_2)
@@ -39,6 +45,11 @@ public class SwaggerConfiguration {
 				.pathMapping("/");
 	}
 
+	/**
+	 * Api info.
+	 *
+	 * @return the api info
+	 */
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder()
 				.title("Spring REST Service for Device Registry")
