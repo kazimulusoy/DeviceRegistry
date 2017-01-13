@@ -72,7 +72,7 @@ public class DeviceRegistryController {
 		LOG.info(hardware.toString());
 		
 		if (rabbitmqEnabled) {
-			this.rabbitTemplate.convertAndSend(syslogServiceQueue, hardware.toString() + " added!");
+			this.rabbitTemplate.convertAndSend(syslogServiceQueue, hardware + " added!");
 		}
 		
 		return this.deviceRepository.save(hardware);
@@ -106,7 +106,7 @@ public class DeviceRegistryController {
 		
 		if (!devices.isEmpty() && rabbitmqEnabled) {
 			for (Device device : devices) {
-				this.rabbitTemplate.convertAndSend(syslogServiceQueue, device.toString() + " deleted!");
+				this.rabbitTemplate.convertAndSend(syslogServiceQueue, device + " deleted!");
 			}
 		}
 		

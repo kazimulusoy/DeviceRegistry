@@ -1,5 +1,7 @@
 package com.deviceregistry.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -16,7 +18,7 @@ import javax.persistence.Table;
 @Entity
 @DiscriminatorValue(value = "tracking-device")
 @Table(name = "device")
-public class Device {
+public class Device implements Serializable{
 	/**
 	 * The serialVersionUID is a universal version identifier for a Serializable
 	 * class. Deserialization uses this number to ensure that a loaded class
