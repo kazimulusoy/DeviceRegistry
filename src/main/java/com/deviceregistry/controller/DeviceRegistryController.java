@@ -72,7 +72,7 @@ public class DeviceRegistryController {
 		LOG.info(hardware.toString());
 		
 		if (rabbitmqEnabled) {
-			this.rabbitTemplate.convertAndSend(syslogServiceQueue, hardware.toString() + " added!");
+			this.rabbitTemplate.convertAndSend(syslogServiceQueue, hardware + " added!");
 		}
 		
 		return this.deviceRepository.save(hardware);
@@ -106,7 +106,7 @@ public class DeviceRegistryController {
 		
 		if (!devices.isEmpty() && rabbitmqEnabled) {
 			for (Device device : devices) {
-				this.rabbitTemplate.convertAndSend(syslogServiceQueue, device.toString() + " deleted!");
+				this.rabbitTemplate.convertAndSend(syslogServiceQueue, device + " deleted!");
 			}
 		}
 		
@@ -133,17 +133,5 @@ public class DeviceRegistryController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteAll() {
 		this.deviceRepository.deleteAll();
-	}
-	
-	/**
-	 * Gets conf from config server.
-	 *
-	 * @return the all
-	 */
-	@RequestMapping(value = "/conf", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Transactional
-	@ResponseStatus(HttpStatus.OK)
-	public String getConf() {
-		return "syslog queue name: " + this.syslogServiceQueue + " " + " is rabbit messaging enabled: " + this.rabbitmqEnabled;
 	}
 }
