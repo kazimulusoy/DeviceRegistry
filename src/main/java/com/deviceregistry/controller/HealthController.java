@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HealthController {
 	
-	/** The service queue. */
-	@Value("${syslog.rabbitmq.queue}")
-	private String syslogServiceQueue;
+	/** The service exchange. */
+	@Value("${syslog.rabbitmq.exchange}")
+	private String syslogServiceExchange;
 	
 	/** The rabbitmq enabled. */
 	@Value("${rabbitmq.enabled}")
@@ -41,6 +41,6 @@ public class HealthController {
 	@RequestMapping(value = "/conf", method = RequestMethod.GET)
 	@Transactional
 	public String getConf() {
-		return "syslog queue name: " + this.syslogServiceQueue + " - " + "rabbit messaging enabled: " + this.rabbitmqEnabled;
+		return "syslog exchange name: " + this.syslogServiceExchange + " - " + "rabbit messaging enabled: " + this.rabbitmqEnabled;
 	}
 }

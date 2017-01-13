@@ -40,9 +40,9 @@ public class DeviceRegistryController {
 	@Autowired
 	private final RabbitTemplate rabbitTemplate;
 	
-	/** The service queue. */
-	@Value("${syslog.rabbitmq.queue}")
-	private String syslogServiceQueue;
+	/** The service exchange. */
+	@Value("${syslog.rabbitmq.exchange}")
+	private String syslogServiceExchange;
 	
 	/** The rabbitmq enabled. */
 	@Value("${rabbitmq.enabled}")
@@ -72,7 +72,7 @@ public class DeviceRegistryController {
 		LOG.info(hardware.toString());
 		
 		if (rabbitmqEnabled) {
-			this.rabbitTemplate.convertAndSend(syslogServiceQueue, hardware + " added!");
+			this.rabbitTemplate.convertAndSend(this.syslogServiceExchange, hardware + " added!");
 		}
 		
 		return this.deviceRepository.save(hardware);
@@ -106,7 +106,7 @@ public class DeviceRegistryController {
 		
 		if (!devices.isEmpty() && rabbitmqEnabled) {
 			for (Device device : devices) {
-				this.rabbitTemplate.convertAndSend(syslogServiceQueue, device + " deleted!");
+				this.rabbitTemplate.convertAndSend(this.syslogServiceExchange, device + " deleted!");
 			}
 		}
 		
