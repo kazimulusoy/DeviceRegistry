@@ -134,16 +134,4 @@ public class DeviceRegistryController {
 	public void deleteAll() {
 		this.deviceRepository.deleteAll();
 	}
-	
-	/**
-	 * Gets conf from config server.
-	 *
-	 * @return the all
-	 */
-	@RequestMapping(value = "/conf", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Transactional
-	@ResponseStatus(HttpStatus.OK)
-	public String getConf() {
-		return "syslog queue name: " + this.syslogServiceQueue + " " + " is rabbit messaging enabled: " + this.rabbitmqEnabled;
-	}
 }
