@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +25,7 @@ import com.deviceregistry.repository.DeviceRepository;
 /**
  * The Class DeviceRegistryController.
  */
+@RefreshScope
 @RestController
 @RequestMapping(WebApiConstant.RESOURCE_URL + "/device")
 public class DeviceRegistryController {
@@ -39,8 +41,8 @@ public class DeviceRegistryController {
 	private final RabbitTemplate rabbitTemplate;
 	
 	/** The service queue. */
-	@Value("${target.rabbitmq.queue}")
-	private String targetServiceQueue;
+	@Value("${syslog.rabbitmq.queue}")
+	private String syslogServiceQueue;
 	
 	/** The rabbitmq enabled. */
 	@Value("${rabbitmq.enabled}")
@@ -70,7 +72,7 @@ public class DeviceRegistryController {
 		LOG.info(hardware.toString());
 		
 		if (rabbitmqEnabled) {
-			this.rabbitTemplate.convertAndSend(targetServiceQueue, hardware.toString() + " added!");
+			this.rabbitTemplate.convertAndSend(syslogServiceQueue, hardware.toString() + " added!");
 		}
 		
 		return this.deviceRepository.save(hardware);
@@ -104,7 +106,7 @@ public class DeviceRegistryController {
 		
 		if (!devices.isEmpty() && rabbitmqEnabled) {
 			for (Device device : devices) {
-				this.rabbitTemplate.convertAndSend(targetServiceQueue, device.toString() + " deleted!");
+				this.rabbitTemplate.convertAndSend(syslogServiceQueue, device.toString() + " deleted!");
 			}
 		}
 		
@@ -131,5 +133,17 @@ public class DeviceRegistryController {
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void deleteAll() {
 		this.deviceRepository.deleteAll();
+	}
+	
+	/**
+	 * Gets conf from config server.
+	 *
+	 * @return the all
+	 */
+	@RequestMapping(value = "/conf", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Transactional
+	@ResponseStatus(HttpStatus.OK)
+	public String getConf() {
+		return "syslog queue name: " + this.syslogServiceQueue + " " + " is rabbit messaging enabled: " + this.rabbitmqEnabled;
 	}
 }
