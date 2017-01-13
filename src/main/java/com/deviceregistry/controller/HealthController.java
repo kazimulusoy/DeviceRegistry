@@ -41,6 +41,6 @@ public class HealthController {
 	@RequestMapping(value = "/conf", method = RequestMethod.GET)
 	@Transactional
 	public String getConf() {
-		return "syslog queue name: " + this.syslogServiceQueue + " " + " is rabbit messaging enabled: " + this.rabbitmqEnabled;
+		return "syslog queue name: " + this.syslogServiceQueue + " - " + "rabbit messaging enabled: " + this.rabbitmqEnabled;
 	}
 }
