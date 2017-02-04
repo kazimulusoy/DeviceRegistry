@@ -28,7 +28,6 @@ import com.deviceregistry.repository.DeviceRepository;
  * The Class DeviceRegistryController.
  */
 @RefreshScope
-@Component
 @RestController
 @RequestMapping(WebApiConstant.RESOURCE_URL + "/device")
 public class DeviceRegistryController {
@@ -41,15 +40,26 @@ public class DeviceRegistryController {
 	
 	/** The rabbit template. */
 	@Autowired
-	private RabbitTemplate rabbitTemplate;
+	private final RabbitTemplate rabbitTemplate;
 	
-	/** The service queue. */
-	@Value("${target.rabbitmq.queue}")
-	private String targetServiceQueue;
+	/** The service exchange. */
+	@Value("${syslog.rabbitmq.exchange}")
+	private String syslogServiceExchange;
 	
 	/** The rabbitmq enabled. */
 	@Value("${rabbitmq.enabled}")
-	private String rabbitmqEnabled;
+	private boolean rabbitmqEnabled;
+	
+	/**
+	 * 
+	 * Instantiates a new device registry controller.
+	 *
+	 * @param rabbitTemplate the rabbit template
+	 * @param context the context
+	 */
+	public DeviceRegistryController(RabbitTemplate rabbitTemplate) {
+		this.rabbitTemplate = rabbitTemplate;
+	}
 	
 	/**
 	 * Creates the.
@@ -63,8 +73,8 @@ public class DeviceRegistryController {
 	public Device create(@RequestBody Device hardware) {
 		LOG.info(hardware.toString());
 		
-		if (Boolean.parseBoolean(rabbitmqEnabled)) {
-			this.rabbitTemplate.convertAndSend(targetServiceQueue, hardware.toString() + " added!");
+		if (rabbitmqEnabled) {
+			this.rabbitTemplate.convertAndSend(this.syslogServiceExchange, hardware + " added!");
 		}
 		
 		return this.deviceRepository.save(hardware);
@@ -96,9 +106,9 @@ public class DeviceRegistryController {
 		LOG.info("Serial Number for delete request: " + serial);
 		List<Device> devices = (List<Device>) this.deviceRepository.findBySerialNumber(serial);
 		
-		if (!devices.isEmpty() && (Boolean.parseBoolean(rabbitmqEnabled))) {
+		if (!devices.isEmpty() && rabbitmqEnabled) {
 			for (Device device : devices) {
-				this.rabbitTemplate.convertAndSend(targetServiceQueue, device.toString() + " deleted!");
+				this.rabbitTemplate.convertAndSend(this.syslogServiceExchange, device + " deleted!");
 			}
 		}
 		
@@ -126,18 +136,4 @@ public class DeviceRegistryController {
 	public void deleteAll() {
 		this.deviceRepository.deleteAll();
 	}
-	
-	/**
-	 * Get config values.
-	 */
-	@RequestMapping(value = "/configValues", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Transactional
-	@ResponseStatus(HttpStatus.OK)
-	public List<String> index(){
-        List<String> env = Arrays.asList(
-                "Target Queue Service Name: " + targetServiceQueue,
-                "Is RabbitMQ Enabled: " + rabbitmqEnabled
-        );
-        return env;
-    }
 }

@@ -34,18 +34,23 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-starter-amqp')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.springframework.cloud:spring-cloud-starter-config')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.cloud:spring-cloud-starter-config')
 	compile('io.springfox:springfox-swagger2:2.4.0')
     compile('io.springfox:springfox-swagger-ui:2.4.0')
     compile ('org.slf4j:slf4j-api:1.7.22')
-    compile('org.springframework.cloud:spring-cloud-starter-eureka:1.1.5.RELEASE')
+    compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-eureka', version: '1.1.5.RELEASE'
 	runtime('org.postgresql:postgresql')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }
 
 dependencyManagement {
 	imports {
+<<<<<<< HEAD
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Dalston.BUILD-SNAPSHOT"
+=======
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Camden.SR4"
+>>>>>>> 0df1f12464a980e639b7476c1d261d3f7e6124b8
 	}
 }
