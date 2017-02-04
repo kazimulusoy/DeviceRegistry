@@ -47,10 +47,6 @@ dependencies {
 
 dependencyManagement {
 	imports {
-<<<<<<< HEAD
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Dalston.BUILD-SNAPSHOT"
-=======
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Camden.SR4"
->>>>>>> 0df1f12464a980e639b7476c1d261d3f7e6124b8
 	}
 }
