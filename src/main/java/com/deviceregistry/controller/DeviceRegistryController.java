@@ -1,5 +1,6 @@
 package com.deviceregistry.controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -9,7 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,6 +27,8 @@ import com.deviceregistry.repository.DeviceRepository;
 /**
  * The Class DeviceRegistryController.
  */
+@RefreshScope
+@Component
 @RestController
 @RequestMapping(WebApiConstant.RESOURCE_URL + "/device")
 public class DeviceRegistryController {
@@ -36,7 +41,7 @@ public class DeviceRegistryController {
 	
 	/** The rabbit template. */
 	@Autowired
-	private final RabbitTemplate rabbitTemplate;
+	private RabbitTemplate rabbitTemplate;
 	
 	/** The service queue. */
 	@Value("${target.rabbitmq.queue}")
@@ -44,18 +49,7 @@ public class DeviceRegistryController {
 	
 	/** The rabbitmq enabled. */
 	@Value("${rabbitmq.enabled}")
-	private boolean rabbitmqEnabled;
-	
-	/**
-	 * 
-	 * Instantiates a new device registry controller.
-	 *
-	 * @param rabbitTemplate the rabbit template
-	 * @param context the context
-	 */
-	public DeviceRegistryController(RabbitTemplate rabbitTemplate) {
-		this.rabbitTemplate = rabbitTemplate;
-	}
+	private String rabbitmqEnabled;
 	
 	/**
 	 * Creates the.
@@ -69,7 +63,7 @@ public class DeviceRegistryController {
 	public Device create(@RequestBody Device hardware) {
 		LOG.info(hardware.toString());
 		
-		if (rabbitmqEnabled) {
+		if (Boolean.parseBoolean(rabbitmqEnabled)) {
 			this.rabbitTemplate.convertAndSend(targetServiceQueue, hardware.toString() + " added!");
 		}
 		
@@ -102,7 +96,7 @@ public class DeviceRegistryController {
 		LOG.info("Serial Number for delete request: " + serial);
 		List<Device> devices = (List<Device>) this.deviceRepository.findBySerialNumber(serial);
 		
-		if (!devices.isEmpty() && rabbitmqEnabled) {
+		if (!devices.isEmpty() && (Boolean.parseBoolean(rabbitmqEnabled))) {
 			for (Device device : devices) {
 				this.rabbitTemplate.convertAndSend(targetServiceQueue, device.toString() + " deleted!");
 			}
@@ -132,4 +126,18 @@ public class DeviceRegistryController {
 	public void deleteAll() {
 		this.deviceRepository.deleteAll();
 	}
+	
+	/**
+	 * Get config values.
+	 */
+	@RequestMapping(value = "/configValues", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Transactional
+	@ResponseStatus(HttpStatus.OK)
+	public List<String> index(){
+        List<String> env = Arrays.asList(
+                "Target Queue Service Name: " + targetServiceQueue,
+                "Is RabbitMQ Enabled: " + rabbitmqEnabled
+        );
+        return env;
+    }
 }
